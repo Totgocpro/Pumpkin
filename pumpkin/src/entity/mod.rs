@@ -52,11 +52,11 @@ use pumpkin_protocol::{
     },
     codec::var_int::VarInt,
     codec::var_ulong::VarULong,
-    ser::NetworkWriteExt,
     java::client::play::{
         CEntityPositionSync, CEntityVelocity, CHeadRot, CPlayerPosition, CSetEntityMetadata,
         CSetPassengers, CSpawnEntity, CUpdateEntityRot, Metadata, MetadataSerializer,
     },
+    ser::NetworkWriteExt,
 };
 use pumpkin_util::math::vector3::Axis;
 use pumpkin_util::math::{
@@ -67,9 +67,9 @@ use pumpkin_util::math::{
     vector3::Vector3,
     wrap_degrees,
 };
-use pumpkin_util::version::JavaMinecraftVersion;
 use pumpkin_util::text::TextComponent;
 use pumpkin_util::text::hover::HoverEvent;
+use pumpkin_util::version::JavaMinecraftVersion;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::pin::Pin;
 use std::sync::{
@@ -2450,8 +2450,7 @@ impl Entity {
         // Only update and send metadata if the value changed
         if new_frozen_ticks != old_frozen_ticks {
             self.frozen_ticks.store(new_frozen_ticks, Ordering::Relaxed);
-            let freeze_strength =
-                (new_frozen_ticks as f32) / (Self::MAX_FROZEN_TICKS as f32);
+            let freeze_strength = (new_frozen_ticks as f32) / (Self::MAX_FROZEN_TICKS as f32);
             let mut bedrock_meta = EntityMetadata::new();
             bedrock_meta.set(
                 entity_data_key::FREEZING_EFFECT_STRENGTH,
@@ -2463,8 +2462,7 @@ impl Entity {
 
             for player in world.players.load().iter() {
                 let center = player.get_entity().chunk_pos.load();
-                let view_distance =
-                    crate::world::chunker::get_view_distance(player).get() as i32;
+                let view_distance = crate::world::chunker::get_view_distance(player).get() as i32;
                 if !is_within_view_distance(chunk_pos, center, view_distance) {
                     continue;
                 }
