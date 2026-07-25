@@ -257,7 +257,7 @@ impl TemplatePool {
         } else if let Some(json) =
             crate::generation::structure::template::get_template_pool_json(id)
         {
-            let raw: RawTemplatePool = match serde_json::from_str(json) {
+            let raw: RawTemplatePool = match serde_json::from_str(&json) {
                 Ok(pool) => pool,
                 Err(error) => {
                     tracing::error!("Failed to parse template pool {id}: {error}");

@@ -106,6 +106,9 @@ crash-reports/
 # docker-compose
 data/*
 
+# assets téléchargés depuis le client.jar Mojang
+assets/minecraft_assets/
+
 # project's configurations
 pumpkin.toml
 

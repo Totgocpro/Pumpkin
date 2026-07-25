@@ -26,11 +26,13 @@ use pumpkin::{
 };
 use pumpkin::{PumpkinServer, stop_server};
 
+use pumpkin_assets::AssetManager;
 use pumpkin_config::{LoadConfiguration, PumpkinConfig};
 use pumpkin_util::text::{
     TextComponent,
     color::{Color, NamedColor},
 };
+use std::path::Path;
 use std::time::Instant;
 use tracing::{debug, info, warn};
 
@@ -62,6 +64,12 @@ async fn main() {
     let vanilla_data = VanillaData::load();
 
     pumpkin::init_logger(&config.advanced);
+
+    // Initialise Mojang assets (translations, structures, loot tables, ...)
+    init_mojang_assets(&exec_dir).await;
+
+    // Load vanilla translations from the asset cache (requires cache_root)
+    pumpkin_util::translation::init_vanilla_translations();
 
     info!(
         "{}",
@@ -179,6 +187,58 @@ fn print_support_links_and_warning() {
             .color_named(NamedColor::Aqua)
             .to_pretty_console()
     );
+}
+
+/// Initialise Mojang assets: download client.jar if needed and set up cache paths.
+/// Always sets the cache root so that later consumers (translations, structures, etc.)
+/// can attempt to read from the expected location even if the download fails.
+async fn init_mojang_assets(exec_dir: &Path) {
+    let asset_mgr = AssetManager::new(exec_dir);
+
+    // Always set the cache root so the path is available for all consumers.
+    // load_lang_json / read_structure_bytes handle missing files gracefully.
+    pumpkin_util::asset_path::set_cache_root(asset_mgr.cache_root().to_owned());
+
+    if asset_mgr.is_cached() {
+        return;
+    }
+
+    println!(
+        "{}",
+        TextComponent::text(
+            "Minecraft assets (translations, structures, loot tables, ...) are required.\n\
+             These are extracted from the official Minecraft client and property of Mojang AB.\n\
+             By downloading them you accept the Minecraft EULA: https://www.minecraft.net/en-us/eula\n\n\
+             Do you accept the Minecraft EULA? [y/N]"
+        )
+        .color_named(NamedColor::Yellow)
+        .to_pretty_console()
+    );
+
+    let mut input = String::new();
+    if std::io::stdin().read_line(&mut input).is_err() {
+        eprintln!("WARN: No input available, skipping asset download.");
+        warn!("No input available, skipping asset download.");
+        return;
+    }
+
+    if !matches!(input.trim().to_lowercase().as_str(), "y" | "yes") {
+        eprintln!("WARN: Minecraft EULA not accepted. Some features may not work correctly.");
+        warn!("Minecraft EULA not accepted. Some features may not work correctly.");
+        return;
+    }
+
+    match asset_mgr.ensure(true) {
+        Ok(()) => {
+            info!("Minecraft assets downloaded and cached successfully.");
+        }
+        Err(e) => {
+            eprintln!("ERROR: Failed to download Minecraft assets: {e}");
+            eprintln!("ERROR: Some features (translations, structures, loot tables) may be unavailable.");
+            warn!("Failed to download Minecraft assets: {e}");
+            warn!("Some features (translations, structures, loot tables) may be unavailable.");
+        }
+    }
 }
 
 fn handle_interrupt() {

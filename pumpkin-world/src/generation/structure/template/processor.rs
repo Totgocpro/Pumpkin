@@ -210,7 +210,7 @@ pub fn load_processor_list(name: &str) -> Arc<[StructureProcessor]> {
         tracing::warn!("Unknown structure processor list: {name}");
         return Arc::from([]);
     };
-    let raw: RawProcessorList = match serde_json::from_str(json) {
+    let raw: RawProcessorList = match serde_json::from_str(&json) {
         Ok(raw) => raw,
         Err(error) => {
             tracing::error!("Failed to parse structure processor list {name}: {error}");

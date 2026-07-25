@@ -5,6 +5,7 @@ use pumpkin_data::{
 };
 use pumpkin_util::math::vector2::Vector2;
 
+pub mod asset_path;
 pub mod biome;
 pub mod block;
 pub mod chunk;

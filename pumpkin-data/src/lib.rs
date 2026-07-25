@@ -1,8 +1,12 @@
 #![allow(unused_imports)]
 
-#[rustfmt::skip]
-#[path = "generated/chest_loot.rs"]
-pub mod chest_loot_table;
+pub mod chest_loot_runtime;
+
+pub mod chest_loot_table {
+    //! Runtime chest loot table loader.
+    //! Reads loot tables from the extracted Mojang asset cache.
+    pub use crate::chest_loot_runtime::get_chest_loot_table;
+}
 
 #[cfg(feature = "item")]
 #[rustfmt::skip]

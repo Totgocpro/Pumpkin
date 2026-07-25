@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "pumpkin-api-macros",
+    "pumpkin-assets",
     "pumpkin-config",
     "pumpkin-util",
     "pumpkin-inventory",
@@ -111,6 +112,7 @@ rayon = { version = "1.12", default-features = false }
 crossbeam = { version = "0.8", default-features = false, features = ["std"] }
 
 uuid = { version = "1.24", default-features = false, features = ["serde", "v3", "v4", "std"] }
+zip = { version = "2.4", default-features = false, features = ["deflate"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
 serde_repr = { version = "0.1", default-features = false }
 serde_json = { version = "1.0", default-features = false, features = ["std"] }
@@ -157,6 +159,7 @@ pumpkin-inventory = { path = "pumpkin-inventory", default-features = false }
 pumpkin-macros = { path = "pumpkin-macros", default-features = false }
 pumpkin-nbt = { path = "pumpkin-nbt", default-features = false }
 pumpkin-protocol = { path = "pumpkin-protocol", default-features = false }
+pumpkin-assets = { path = "pumpkin-assets", default-features = false }
 pumpkin-util = { path = "pumpkin-util", default-features = false }
 pumpkin-world = { path = "pumpkin-world", default-features = false }
 quote = { version = "1.0", default-features = false, features = ["proc-macro"] }

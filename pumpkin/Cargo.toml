@@ -18,6 +18,7 @@ doctest = false
 
 [dependencies]
 # pumpkin
+pumpkin-assets.workspace = true
 arc-swap.workspace = true
 rayon.workspace = true
 pumpkin-util.workspace = true
